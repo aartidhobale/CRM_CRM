@@ -1,144 +1,158 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-// import { DatePicker } from "@shadcn/ui/date-picker";
 
-const ProfileForm = () => {
-  const { register, handleSubmit, setValue } = useForm();
-  const [profilePic, setProfilePic] = useState(null);
+const ProfileFormReadOnly = ({ profileData, onSave }) => {
+  // Fallback to empty strings if profileData is not provided
+  const [data, setData] = useState(profileData || {
+    profilePic: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    location: "",
+    country: "",
+    city: "",
+    zip: "",
+    specialization: "",
+    experience: "",
+    panelCategory: "",
+    contestedArbitration: "",
+    address: "",
+    profession: "",
+    dob: "",
+    gender: "",
+  });
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-
-  const handleProfilePicChange = (e) => {
-    setProfilePic(URL.createObjectURL(e.target.files[0]));
-    setValue("profilePic", e.target.files[0]);
+  // Handle image upload and preview
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setData((prevData) => ({
+          ...prevData,
+          profilePic: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-6 bg-white rounded-md shadow-lg max-w-4xl mx-auto">
+    <div className="space-y-4 p-6 bg-white rounded-md shadow-lg max-w-4xl mx-auto">
       <h1 className="text-2xl font-semibold mb-4">Profile Management</h1>
 
-      {/* Profile Picture */}
+      {/* Profile Picture Upload */}
       <div className="mb-4">
-        <label className="block text-sm font-medium">Profile Picture</label>
-        <input type="file" onChange={handleProfilePicChange} className="mt-1" />
-        {profilePic && <img src={profilePic} alt="Profile Preview" className="w-20 h-20 rounded-full mt-2" />}
+        <Label>Profile Picture</Label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="mt-2"
+        />
+        {data.profilePic && (
+          <img
+            src={data.profilePic}
+            alt="Profile Preview"
+            className="w-20 h-20 rounded-full mt-2"
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* First Name and Last Name */}
+        {/* First Name and Specialization */}
         <div>
-          <label className="block text-sm font-medium">First Name</label>
-          <Input {...register("firstName")} placeholder="First Name" />
+          <Label>First Name:</Label>
+          <p className="text-gray-700">{data.firstName}</p>
         </div>
         <div>
-          <label className="block text-sm font-medium">Last Name</label>
-          <Input {...register("lastName")} placeholder="Last Name" />
+          <Label>Specialization:</Label>
+          <p className="text-gray-700">{data.specialization}</p>
+        </div>
+
+        {/* Last Name and Years of Experience */}
+        <div>
+          <Label>Last Name:</Label>
+          <p className="text-gray-700">{data.lastName}</p>
+        </div>
+        <div>
+          <Label>Years of Experience:</Label>
+          <p className="text-gray-700">{data.experience}</p>
+        </div>
+
+        {/* Phone and Categories of Panel of Arbitrator */}
+        <div>
+          <Label>Phone:</Label>
+          <p className="text-gray-700">{data.phone}</p>
+        </div>
+        <div>
+          <Label>Categories of Panel of Arbitrator:</Label>
+          <p className="text-gray-700">{data.panelCategory}</p>
+        </div>
+
+        {/* Email and Contested Arbitration */}
+        <div>
+          <Label>Email:</Label>
+          <p className="text-gray-700">{data.email}</p>
+        </div>
+        <div>
+          <Label>Contested Arbitration:</Label>
+          <p className="text-gray-700">{data.contestedArbitration}</p>
+        </div>
+
+        {/* Location and Address */}
+        <div>
+          <Label>Location:</Label>
+          <p className="text-gray-700">{data.location}</p>
+        </div>
+        <div>
+          <Label>Address:</Label>
+          <p className="text-gray-700">{data.address}</p>
+        </div>
+
+        {/* Country and Profession */}
+        <div>
+          <Label>Country:</Label>
+          <p className="text-gray-700">{data.country}</p>
+        </div>
+        <div>
+          <Label>Profession:</Label>
+          <p className="text-gray-700">{data.profession}</p>
+        </div>
+
+        {/* City and DOB */}
+        <div>
+          <Label>City:</Label>
+          <p className="text-gray-700">{data.city}</p>
+        </div>
+        <div>
+          <Label>Date of Birth:</Label>
+          <p className="text-gray-700">{data.dob}</p>
+        </div>
+
+        {/* Zip and Gender */}
+        <div>
+          <Label>Zip:</Label>
+          <p className="text-gray-700">{data.zip}</p>
+        </div>
+        <div>
+          <Label>Gender:</Label>
+          <p className="text-gray-700">{data.gender}</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* Phone, Mobile, and Email */}
-        <div>
-          <label className="block text-sm font-medium">Phone</label>
-          <Input {...register("phone")} placeholder="Phone" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Mobile</label>
-          <Input {...register("mobile")} placeholder="Mobile" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Email</label>
-          <Input {...register("email")} placeholder="Email" type="email" />
-        </div>
+      {/* Save Profile Button */}
+      <div className="flex justify-end mt-6">
+        <Button onClick={onSave} className="w-32">
+          Save Profile
+        </Button>
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        {/* Location, Country, City, and Zip */}
-        <div>
-          <label className="block text-sm font-medium">Location</label>
-          <Input {...register("location")} placeholder="Location" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Country</label>
-          <Input {...register("country")} placeholder="Country" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">City</label>
-          <Input {...register("city")} placeholder="City" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Zip</label>
-          <Input {...register("zip")} placeholder="Zip" type="number" />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* Specialization, Address, and Profession */}
-        <div>
-          <label className="block text-sm font-medium">Specialization</label>
-          <Input {...register("specialization")} placeholder="Specialization" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Address</label>
-          <Input {...register("address")} placeholder="Address" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Profession</label>
-          <Input {...register("profession")} placeholder="Profession" />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Date of Birth and Gender */}
-        <div>
-          <label className="block text-sm font-medium">Date of Birth</label>
-          {/* Uncomment DatePicker when available */}
-          {/* <DatePicker onChange={(date) => setValue("dob", date)} /> */}
-          <Input {...register("dob")} placeholder="Date of Birth" type="date" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Gender</label>
-          <div className="flex items-center space-x-4 mt-1">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="male"
-                {...register("gender")}
-                className="mr-2"
-              />
-              Male
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="female"
-                {...register("gender")}
-                className="mr-2"
-              />
-              Female
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="other"
-                {...register("gender")}
-                className="mr-2"
-              />
-              Other
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <Button type="submit" className="w-15 mt-4">Save Profile</Button>
-    </form>
+    </div>
   );
 };
 
-export default ProfileForm;
+export default ProfileFormReadOnly;
